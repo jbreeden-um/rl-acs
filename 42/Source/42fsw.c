@@ -1130,7 +1130,19 @@ void PrototypeFSW(struct SCType *S)
          /* Closed-loop attitude control */
          VectorRampCoastGlide(C->therr,C->werr,
             C->wc,C->amax,C->vmax,alpha);
-         for(i=0;i<3;i++) AC->IdealTrq[i] = AC->MOI[i][i]*alpha[i];
+         for(i=0;i<3;i++) {
+            C->Tcmd[i] = AC->MOI[i][i]*alpha[i];
+            AC->Whl[i].Tcmd = -C->Tcmd[i];
+         }
+
+         /* Momentum Management */
+         double HxB[3];
+         double Kunl = 1e6;
+         for(i=0;i<3;i++) {
+            Herr[i] = AC->Whl[i].H;
+         }
+         VxV(Herr,AC->bvb,HxB);
+         for(i=0;i<3;i++) AC->MTB[i].Mcmd = Kunl*HxB[i];
       }
 
 }
