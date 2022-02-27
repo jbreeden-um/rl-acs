@@ -139,7 +139,7 @@ endif
 
 ifeq ($(42PLATFORM),__MSYS__)
    CINC =
-   EXTERNDIR = /c/42ExternalSupport/
+   EXTERNDIR = /c/MinGW/msys/42ExternalSupport/
    # For graphics interface, choose GLUT or GLFW GUI libraries
    # GLUT is well known, but GLFW is better for newer Mac's hires displays
    #GLUT_OR_GLFW = _USE_GLFW_
