@@ -1145,7 +1145,7 @@ void PrototypeFSW(struct SCType *S)
          VxV(S->svn, orb_normal, orb_direction); // note that svn is the negative of \hat{p} in the writeup
          VxV(W->PosH, W->VelH, ecliptic_normal);
          AC->position_angles[2] = acos(-VoV(orb_normal, S->svn))*signum(VoV(ecliptic_normal, orb_direction)); // beta angle, sun direction
-         if (SimTime < 1.0) printf("%lf\n", AC->position_angles[2]*R2D);
+         if (SimTime == 0.0) printf("Beta = %lf deg\n", AC->position_angles[2]*R2D);
 
          /* Closed-loop attitude control */
          VectorRampCoastGlide(C->therr,C->werr,
