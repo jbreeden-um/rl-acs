@@ -145,6 +145,7 @@ void Report(void)
       static FILE *Hwhlfile;
       static FILE *MTBfile;
       static FILE *AlbedoFile;
+      static FILE *RLFile;
       //static FILE *ProjAreaFile;
       static FILE *AccFile;
       static char First = TRUE;
@@ -157,9 +158,11 @@ void Report(void)
       char s[40];
       //double ZAxis[3] = {0.0,0.0,1.0};
 
+      char use_short_log = TRUE;
       if (First) {
          First = FALSE;
          timefile = FileOpen(InOutPath,"time.42","w");
+         if (!use_short_log){
          DynTimeFile = FileOpen(InOutPath,"DynTime.42","w");
 
          ufile = (FILE **) calloc(Nsc,sizeof(FILE *));
@@ -202,12 +205,14 @@ void Report(void)
          Hwhlfile = FileOpen(InOutPath,"Hwhl.42","w");
          MTBfile = FileOpen(InOutPath,"MTB.42","w");
          AccFile = FileOpen(InOutPath,"Acc.42","w");
-         
          AlbedoFile = FileOpen(InOutPath,"Albedo.42","w");
+         }
+         RLFile = FileOpen(InOutPath,"RL.42","w");
       }
 
       if (OutFlag) {
          fprintf(timefile,"%lf\n",SimTime);
+         if (!use_short_log){
          fprintf(DynTimeFile,"%lf\n",DynTime);
          for(Isc=0;Isc<Nsc;Isc++) {
             if (SC[Isc].Exists) {
@@ -230,7 +235,9 @@ void Report(void)
                }
             }
          }
+         }
          if (SC[0].Exists) {
+            if (!use_short_log){
             fprintf(PosNfile,"%le %le %le\n",
                SC[0].PosN[0],SC[0].PosN[1],SC[0].PosN[2]);
             fprintf(VelNfile,"%le %le %le\n",
@@ -301,7 +308,11 @@ void Report(void)
             //GyroReport();
             
             FreqRespDiag();
-
+            }
+            fprintf(RLFile,"%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le\n",
+               SC[0].Hvb[0],SC[0].Hvb[1],SC[0].Hvb[2],
+               SC[0].AC.position_angles[0],SC[0].AC.position_angles[1],SC[0].AC.position_angles[2],
+               SC[0].MTB[0].M, SC[0].MTB[1].M, SC[0].MTB[2].M);
          }
 
       }
