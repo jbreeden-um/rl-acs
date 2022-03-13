@@ -10,9 +10,9 @@ CM                            !  Pos of CM or ORIGIN, wrt F
 0.0  0.0  0.0                 !  Pos wrt Formation (m), expressed in F
 0.0  0.0  0.0                 !  Vel wrt Formation (m/s), expressed in F
 *************************** Initial Attitude ***************************
-NAN                           ! Ang Vel wrt [NL], Att [QA] wrt [NLF]
+LQL                           ! Ang Vel wrt [NL], Att [QA] wrt [NLF]
 0.0    0.0    0.0             ! Ang Vel (deg/sec)
-0.0    0.0    0.0    1.0      ! Quaternion
+0.000774  0.000911  0.707118  0.707095      ! Quaternion
 60.0  40.0   20.0    213      ! Angles (deg) & Euler Sequence
 ***************************  Dynamics Flags  ***************************
 GAUSS_ELIM                    ! Solve Dynamics by GAUSS_ELIM or ORDER_N

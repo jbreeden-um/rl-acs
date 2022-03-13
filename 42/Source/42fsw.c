@@ -1127,6 +1127,12 @@ void PrototypeFSW(struct SCType *S)
          Q2AngleVec(qbr,C->therr);
          for(i=0;i<3;i++) C->werr[i] = AC->wbn[i] - Cmd->wrn[i];
 
+         // double qbl[4], qln[4];
+         // C2Q(S->CLN, qln);
+         // QxQT(AC->qbn, qln, qbl);
+         // if (SimTime < 100)
+         //    printf("%lf  %lf  %lf  %lf\n", qbl[0], qbl[1], qbl[2], qbl[3]);
+
          /* Closed-loop attitude control */
          VectorRampCoastGlide(C->therr,C->werr,
             C->wc,C->amax,C->vmax,alpha);

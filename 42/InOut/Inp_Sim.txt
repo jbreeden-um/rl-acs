@@ -3,7 +3,7 @@
 FAST                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)
 8000.0   0.1                    !  Sim Duration, Step Size [sec]
 1.0                             !  File Output Interval [sec]
-TRUE                            !  Graphics Front End?
+FALSE                           !  Graphics Front End?
 RL_Command.txt                  !  Command Script File Name
 **************************  Reference Orbits  **************************
 1                               !  Number of Reference Orbits
