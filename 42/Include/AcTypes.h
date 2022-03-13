@@ -444,6 +444,8 @@ struct AcType {
    struct AcThrSteerCtrlType ThrSteerCtrl;
    
    struct CmdType Cmd;
+
+   double position_angles[3];
 };
 
 /*

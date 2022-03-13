@@ -1127,6 +1127,26 @@ void PrototypeFSW(struct SCType *S)
          Q2AngleVec(qbr,C->therr);
          for(i=0;i<3;i++) C->werr[i] = AC->wbn[i] - Cmd->wrn[i];
 
+         /* Calculate error with respect to LVLH frame (for debugging) */
+         // double qbl[4], qln[4];
+         // C2Q(S->CLN, qln);
+         // QxQT(AC->qbn, qln, qbl);
+         // if (SimTime < 100)
+         //    printf("%lf  %lf  %lf  %lf\n", qbl[0], qbl[1], qbl[2], qbl[3]);
+
+         /* Calculate state angles (see dynamics writeup) */
+         struct OrbitType *O = &Orb[S->RefOrb];
+         struct WorldType *W = &World[O->World];
+         AC->position_angles[0] = O->anom; // nu angle, true anomaly
+         AC->position_angles[1] = O->RAAN + W->PriMerAng; // Theta angle, right ascension plus Earth's rotation
+         double orb_normal[3], orb_direction[3], ecliptic_normal[3];
+         VxV(S->PosN, S->VelN, orb_normal);
+         UNITV(orb_normal);
+         VxV(S->svn, orb_normal, orb_direction); // note that svn is the negative of \hat{p} in the writeup
+         VxV(W->PosH, W->VelH, ecliptic_normal);
+         AC->position_angles[2] = acos(-VoV(orb_normal, S->svn))*signum(VoV(ecliptic_normal, orb_direction)); // beta angle, sun direction
+         if (SimTime == 0.0) printf("Beta = %lf deg\n", AC->position_angles[2]*R2D);
+
          /* Closed-loop attitude control */
          VectorRampCoastGlide(C->therr,C->werr,
             C->wc,C->amax,C->vmax,alpha);
@@ -1136,13 +1156,26 @@ void PrototypeFSW(struct SCType *S)
          }
 
          /* Momentum Management */
-         double HxB[3];
-         double Kunl = 1e6;
-         for(i=0;i<3;i++) {
-            Herr[i] = AC->Whl[i].H;
+         /**
+          * controller_number = 1: baseline controller
+          * controller_number = 2: random controller
+          * */
+         const long controller_number = 1;
+         if (controller_number == 1){
+            double HxB[3];
+            double Kunl = 1e6;
+            for(i=0;i<3;i++) {
+               Herr[i] = AC->Whl[i].H;
+            }
+            VxV(Herr,AC->bvb,HxB);
+            for(i=0;i<3;i++) AC->MTB[i].Mcmd = Kunl*HxB[i];
+         }else if (controller_number == 2){
+            // Fill this in. AC->MTB[i].Mcmd is the control vector
+            for(i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
+         }else{
+            printf("Unknown momentum controller, line %d\n", __LINE__);
+            exit(1);
          }
-         VxV(Herr,AC->bvb,HxB);
-         for(i=0;i<3;i++) AC->MTB[i].Mcmd = Kunl*HxB[i];
       }
 
 }
