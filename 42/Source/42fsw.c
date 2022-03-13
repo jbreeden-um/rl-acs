@@ -1142,13 +1142,26 @@ void PrototypeFSW(struct SCType *S)
          }
 
          /* Momentum Management */
-         double HxB[3];
-         double Kunl = 1e6;
-         for(i=0;i<3;i++) {
-            Herr[i] = AC->Whl[i].H;
+         /**
+          * controller_number = 1: baseline controller
+          * controller_number = 2: random controller
+          * */
+         const long controller_number = 1;
+         if (controller_number == 1){
+            double HxB[3];
+            double Kunl = 1e6;
+            for(i=0;i<3;i++) {
+               Herr[i] = AC->Whl[i].H;
+            }
+            VxV(Herr,AC->bvb,HxB);
+            for(i=0;i<3;i++) AC->MTB[i].Mcmd = Kunl*HxB[i];
+         }else if (controller_number == 2){
+            // Fill this in. AC->MTB[i].Mcmd is the control vector
+            for(i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
+         }else{
+            printf("Unknown momentum controller, line %d\n", __LINE__);
+            exit(1);
          }
-         VxV(Herr,AC->bvb,HxB);
-         for(i=0;i<3;i++) AC->MTB[i].Mcmd = Kunl*HxB[i];
       }
 
 }
