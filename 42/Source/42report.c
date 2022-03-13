@@ -309,10 +309,13 @@ void Report(void)
             
             FreqRespDiag();
             }
-            fprintf(RLFile,"%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le\n",
+            fprintf(RLFile,"%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le\n",
                SC[0].Hvb[0],SC[0].Hvb[1],SC[0].Hvb[2],
                SC[0].AC.position_angles[0],SC[0].AC.position_angles[1],SC[0].AC.position_angles[2],
-               SC[0].MTB[0].M, SC[0].MTB[1].M, SC[0].MTB[2].M);
+               SC[0].MTB[0].M, SC[0].MTB[1].M, SC[0].MTB[2].M,
+               // The last 10 pieces of data are for data-checking later in the event that something does not work
+               World[Orb[SC[0].RefOrb].World].PosH[0],World[Orb[SC[0].RefOrb].World].PosH[1],World[Orb[SC[0].RefOrb].World].PosH[2],
+               SC[0].PosN[0],SC[0].PosN[1],SC[0].PosN[2],World[Orb[SC[0].RefOrb].World].PriMerAng, SC[0].bvb[0], SC[0].bvb[1], SC[0].bvb[2]);
          }
 
       }
