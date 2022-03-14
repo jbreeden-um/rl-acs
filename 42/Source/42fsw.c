@@ -1138,7 +1138,7 @@ void PrototypeFSW(struct SCType *S)
          struct OrbitType *O = &Orb[S->RefOrb];
          struct WorldType *W = &World[O->World];
          AC->position_angles[0] = O->anom; // nu angle, true anomaly
-         AC->position_angles[1] = O->RAAN + W->PriMerAng; // Theta angle, right ascension plus Earth's rotation
+         AC->position_angles[1] = O->RAAN - W->PriMerAng; // Theta angle, right ascension minus Earth's rotation
          double orb_normal[3], orb_direction[3], ecliptic_normal[3];
          VxV(S->PosN, S->VelN, orb_normal);
          UNITV(orb_normal);
