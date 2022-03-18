@@ -25,6 +25,9 @@ void ReadFromSocket(SOCKET Socket, long EchoEnabled);
 ** #endif
 */
 
+// Creating a random device for random seed generation
+std::random_device rd;
+
 /**********************************************************************/
 long FswCmdInterpreter(char CmdLine[512],double *CmdTime)
 {
@@ -1075,6 +1078,10 @@ void PrototypeFSW(struct SCType *S)
       double qbr[4];
       long Ig,i,j;
 
+      // Creating a uniform random number generator
+      // This uses action bounds to lie in [-1, 1]. This can be scaled later if required. TODO. 
+      std::uniform_real_distribution distribution(-1.0, 1.0)
+
       AC = &S->AC;
       C = &AC->PrototypeCtrl;
       Cmd = &AC->Cmd;
@@ -1171,7 +1178,9 @@ void PrototypeFSW(struct SCType *S)
             for(i=0;i<3;i++) AC->MTB[i].Mcmd = Kunl*HxB[i];
          }else if (controller_number == 2){
             // Fill this in. AC->MTB[i].Mcmd is the control vector
-            for(i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
+
+            // Trying this out with a uniformly random action choosing policy
+            for(i=0;i<3;i++) AC->MTB[i].Mcmd = distribution(rd);
          }else{
             printf("Unknown momentum controller, line %d\n", __LINE__);
             exit(1);
