@@ -13,6 +13,8 @@
 
 
 #include "42.h"
+#include <time.h>
+#include <stdlib.h>
 
 void AcFsw(struct AcType *AC);
 void WriteToSocket(SOCKET Socket, char **Prefix, long Nprefix, long EchoEnabled);
@@ -24,6 +26,9 @@ void ReadFromSocket(SOCKET Socket, long EchoEnabled);
 ** using namespace Kit;
 ** #endif
 */
+
+// Creating a random device for random seed generation
+// std::random_device rd;
 
 /**********************************************************************/
 long FswCmdInterpreter(char CmdLine[512],double *CmdTime)
@@ -1062,6 +1067,14 @@ void MapCmdsToActuators(struct SCType *S)
       } 
               
 }
+
+double uniform_random_number(double low, double high)
+{
+   // Returns a random number in the range [-1, 1]
+   double num = ((double)rand() / (double)RAND_MAX);
+   return ((num * 2) - 1);
+}
+
 /**********************************************************************/
 /*  This simple control law is suitable for rapid prototyping.        */
 void PrototypeFSW(struct SCType *S)
@@ -1160,6 +1173,9 @@ void PrototypeFSW(struct SCType *S)
           * controller_number = 1: baseline controller
           * controller_number = 2: random controller
           * */
+
+	      // Creating a random device for random seed generation
+         srand(time(NULL));
          const long controller_number = 1;
          if (controller_number == 1){
             double HxB[3];
@@ -1171,7 +1187,9 @@ void PrototypeFSW(struct SCType *S)
             for(i=0;i<3;i++) AC->MTB[i].Mcmd = Kunl*HxB[i];
          }else if (controller_number == 2){
             // Fill this in. AC->MTB[i].Mcmd is the control vector
-            for(i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
+
+            // Trying this out with a uniformly random action choosing policy
+            for(i=0;i<3;i++) AC->MTB[i].Mcmd = uniform_random_number(-1.0, 1.0);
          }else{
             printf("Unknown momentum controller, line %d\n", __LINE__);
             exit(1);
