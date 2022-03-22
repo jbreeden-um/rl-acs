@@ -161,8 +161,8 @@ void Report(void)
       char use_short_log = TRUE;
       if (First) {
          First = FALSE;
-         timefile = FileOpen(InOutPath,"time.42","w");
          if (!use_short_log){
+         timefile = FileOpen(InOutPath,"time.42","w");
          DynTimeFile = FileOpen(InOutPath,"DynTime.42","w");
 
          ufile = (FILE **) calloc(Nsc,sizeof(FILE *));
@@ -211,8 +211,8 @@ void Report(void)
       }
 
       if (OutFlag) {
-         fprintf(timefile,"%lf\n",SimTime);
          if (!use_short_log){
+         fprintf(timefile,"%lf\n",SimTime);
          fprintf(DynTimeFile,"%lf\n",DynTime);
          for(Isc=0;Isc<Nsc;Isc++) {
             if (SC[Isc].Exists) {
@@ -309,7 +309,8 @@ void Report(void)
             
             FreqRespDiag();
             }
-            fprintf(RLFile,"%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le\n",
+            fprintf(RLFile,"%lf,%lf,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le,%18.12le\n",
+               SimTime,DynTime,
                SC[0].Hvb[0],SC[0].Hvb[1],SC[0].Hvb[2],
                SC[0].AC.position_angles[0],SC[0].AC.position_angles[1],SC[0].AC.position_angles[2],
                SC[0].MTB[0].M, SC[0].MTB[1].M, SC[0].MTB[2].M,
