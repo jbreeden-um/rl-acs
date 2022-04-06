@@ -4,8 +4,8 @@ import random
 import pandas
 
 class DataSampler:
-    def __init__(self):
-        self.path_to_data = "../collected_data/rl_deterministic.txt"
+    def __init__(self, path_to_data="../collected_data/rl_deterministic.txt"):
+        self.path_to_data = path_to_data
         self.chunk_length = 27771
         self.max_chunk = 1e4
         self.skip_header = 6
@@ -50,7 +50,9 @@ class DataSampler:
         if batch_size > self.chunk_length-1:
             batch_size = self.chunk_length-1
         
-        batch = random.sample(range(self.chunk_length-1), batch_size)
+        
+        #batch = random.sample(range(self.chunk_length-1), batch_size)
+        batch = [i for i in range(batch_size)]
         # print(self.data[batch])
         
         state_batch = torch.Tensor(self.data[batch,2:8])
