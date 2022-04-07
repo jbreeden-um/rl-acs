@@ -4,6 +4,8 @@
 
 d3rlpy_logs
 d3rlpy_logs/
+runs
+runs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
