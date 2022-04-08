@@ -1189,7 +1189,7 @@ void PrototypeFSW(struct SCType *S)
             // Fill this in. AC->MTB[i].Mcmd is the control vector
 
             // Trying this out with a uniformly random action choosing policy
-            for(i=0;i<3;i++) AC->MTB[i].Mcmd = uniform_random_number(-1.0, 1.0);
+            for(i=0;i<3;i++) AC->MTB[i].Mcmd = uniform_random_number(-0.65, 0.65);
          }else{
             printf("Unknown momentum controller, line %d\n", __LINE__);
             exit(1);
