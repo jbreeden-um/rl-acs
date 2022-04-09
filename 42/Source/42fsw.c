@@ -16,7 +16,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include <torch/script.h> %newly added
+//#include <torch/script.h> %newly added
 
 void AcFsw(struct AcType *AC);
 void WriteToSocket(SOCKET Socket, char **Prefix, long Nprefix, long EchoEnabled);
@@ -1090,7 +1090,9 @@ void PrototypeFSW(struct SCType *S)
       double Hvnb[3],Herr[3],werr[3];
       double qbr[4];
       long Ig,i,j;
-
+    FILE *torch_state_file;
+    FILE *torch_action_file;
+    
       AC = &S->AC;
       C = &AC->PrototypeCtrl;
       Cmd = &AC->Cmd;
@@ -1179,7 +1181,7 @@ void PrototypeFSW(struct SCType *S)
 
 	      // Creating a random device for random seed generation
          srand(time(NULL));
-         const long controller_number = 1;
+         const long controller_number = 3;
          if (controller_number == 1){
             double HxB[3];
             double Kunl = 1e6;
@@ -1193,9 +1195,9 @@ void PrototypeFSW(struct SCType *S)
 
             // Trying this out with a uniformly random action choosing policy
             for(i=0;i<3;i++) AC->MTB[i].Mcmd = uniform_random_number(-1.0, 1.0);
-         }else if （controller_number == 3){
+         }else if (controller_number == 3){
             //Using the control policy resulting from training
-            std::vector<torch::jit::IValue> inputs; // Create a vector of inputs.
+            //std::vector<torch::jit::IValue> inputs; // Create a vector of inputs.
             double States[6];
             for(i=0;i<3;i++) {
                 States[i]=SC->Hvb[i];
@@ -1203,13 +1205,25 @@ void PrototypeFSW(struct SCType *S)
             for(i=0;i<3;i++) {
                 States[i+3]=AC->position_angles[i];
             }
-            torch::Tensor tharray = torch::tensor({{States[0],States[1],States[2],States[3],States[4],States[5]}}, {torch::kFloat32});
-            inputs.push_back(tharray);//-1.0*torch::rand({1, 6}));
+             torch_state_file = FileOpen("./","input.dat","w");
+             for (i=0; i<6; i++) fprintf(torch_state_file,"%lf ", States[i]);
+             fclose(torch_state_file);
+             char *argv[]={"  "};
+             //execv("/Users/liliang/Documents/example_folder/build/example",argv);
+             system("/Users/liliang/Documents/example_folder/build/example");
+             char line[100];
+             torch_action_file = FileOpen("./","output.dat","r");
+             fgets(line,99,torch_action_file);
+             double Actions[3];
+             sscanf(line,"%lf %lf %lf", &Actions[0],&Actions[1],&Actions[2]);
+             fclose(torch_action_file);
+            //torch::Tensor tharray = torch::tensor({{States[0],States[1],States[2],States[3],States[4],States[5]}}, {torch::kFloat32});
+            //inputs.push_back(tharray);//-1.0*torch::rand({1, 6}));
            
 
             // Execute the model and turn its output into a tensor.
-            at::Tensor output = module(inputs).toTensor();
-            for(i=0;i<3;i++) AC->MTB[i].Mcmd = output[0][i]
+            //at::Tensor output = module(inputs).toTensor();
+             for(i=0;i<3;i++) AC->MTB[i].Mcmd = Actions[i];
             //std::cout << output[0]<<'\n';
              
       }else{
