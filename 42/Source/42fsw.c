@@ -16,6 +16,8 @@
 #include <time.h>
 #include <stdlib.h>
 
+#include <torch/script.h> %newly added
+
 void AcFsw(struct AcType *AC);
 void WriteToSocket(SOCKET Socket, char **Prefix, long Nprefix, long EchoEnabled);
 void ReadFromSocket(SOCKET Socket, long EchoEnabled);
@@ -1075,6 +1077,7 @@ double uniform_random_number(double low, double high)
    return ((num * 2) - 1);
 }
 
+
 /**********************************************************************/
 /*  This simple control law is suitable for rapid prototyping.        */
 void PrototypeFSW(struct SCType *S)
@@ -1190,7 +1193,26 @@ void PrototypeFSW(struct SCType *S)
 
             // Trying this out with a uniformly random action choosing policy
             for(i=0;i<3;i++) AC->MTB[i].Mcmd = uniform_random_number(-1.0, 1.0);
-         }else{
+         }else if （controller_number == 3){
+            //Using the control policy resulting from training
+            std::vector<torch::jit::IValue> inputs; // Create a vector of inputs.
+            double States[6];
+            for(i=0;i<3;i++) {
+                States[i]=SC->Hvb[i];
+            }
+            for(i=0;i<3;i++) {
+                States[i+3]=AC->position_angles[i];
+            }
+            torch::Tensor tharray = torch::tensor({{States[0],States[1],States[2],States[3],States[4],States[5]}}, {torch::kFloat32});
+            inputs.push_back(tharray);//-1.0*torch::rand({1, 6}));
+           
+
+            // Execute the model and turn its output into a tensor.
+            at::Tensor output = module(inputs).toTensor();
+            for(i=0;i<3;i++) AC->MTB[i].Mcmd = output[0][i]
+            //std::cout << output[0]<<'\n';
+             
+      }else{
             printf("Unknown momentum controller, line %d\n", __LINE__);
             exit(1);
          }
