@@ -50,7 +50,7 @@ int main(){//(int argc, const char* argv[]) {
 
     // Execute the model and turn its output into a tensor.
     torch::jit::script::Module module;
-    module = torch::jit::load("/Users/liliang/Documents/example_folder/cqlDet.pt");
+    module = torch::jit::load("../cqlDet.pt");
     at::Tensor output = module(inputs).toTensor();
     outdata.open("output.dat", ofstream::out | ofstream::trunc);
     string output1(to_string(output[0][0].item<float>()));
