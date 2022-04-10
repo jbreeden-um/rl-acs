@@ -1210,7 +1210,8 @@ void PrototypeFSW(struct SCType *S)
              fclose(torch_state_file);
              char *argv[]={"  "};
              //execv("/Users/liliang/Documents/example_folder/build/example",argv);
-             system("/Users/liliang/Documents/example_folder/build/example");
+             printf("Sim Time = %lf\n", SimTime);
+	     system("../load_torchscriptModel/build/example");
              char line[100];
              torch_action_file = FileOpen("./","output.dat","r");
              fgets(line,99,torch_action_file);
