@@ -36,7 +36,7 @@ int main(){//(int argc, const char* argv[]) {
     torch::jit::script::Module module;
     try {
       // Deserialize the ScriptModule from a file using torch::jit::load().
-      module = torch::jit::load("/Users/liliang/Documents/example_folder/cqlDet.pt");
+      module = torch::jit::load("../../cqlDet.pt");
     }
     catch (const c10::Error& e) {
       std::cerr << "error loading the model\n";
