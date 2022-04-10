@@ -9,7 +9,10 @@
 #include <torch/script.h> // One-stop header.
 
 #include <iostream>
+#include <fstream>
 #include <memory>
+#include <string>
+using namespace std;
 
 void test(torch::jit::script::Module module){
     std::vector<torch::jit::IValue> inputs;
@@ -24,27 +27,58 @@ void test(torch::jit::script::Module module){
     //std::memcpy(tharray.data_ptr(),array,sizeof(double)*tharray.numel());
     torch::Tensor tharray = torch::tensor({{States[0],States[1],States[2],States[3],States[4],States[5]}}, {torch::kFloat32});
     inputs.push_back(tharray);//-1.0*torch::rand({1, 6}));
-    std::cout << "hi\n";
+    //std::cout << "hi\n";
 
     // Execute the model and turn its output into a tensor.
     at::Tensor output = module(inputs).toTensor();
-    std::cout << output[0]<<'\n';
+    //std::cout << output[0]<<'\n';
 }
 int main(){//(int argc, const char* argv[]) {
     //torch::Tensor tensor = torch::eye(3);
-    //std::cout << tensor <<std::endl;
-    torch::jit::script::Module module;
-    try {
-      // Deserialize the ScriptModule from a file using torch::jit::load().
-      module = torch::jit::load("../../cqlDet.pt");
+    //std::cout << tensor <<std::endl;<<<<<<< HEAD
+    ifstream indata;
+    ofstream outdata;
+    indata.open("input.dat");
+    double States[6];
+    for (int i=0; i<6; i++){
+        indata >> States[i];
+        cout << States[i] <<'\n';
     }
-    catch (const c10::Error& e) {
-      std::cerr << "error loading the model\n";
-      return -1;
-    }
+    std::vector<torch::jit::IValue> inputs;
+    torch::Tensor tharray = torch::tensor({{States[0],States[1],States[2],States[3],States[4],States[5]}}, {torch::kFloat32});
+    inputs.push_back(tharray);
 
-    std::cout << "ok\n";
-    test(module);
+    // Execute the model and turn its output into a tensor.
+    torch::jit::script::Module module;
+    module = torch::jit::load("/Users/liliang/Documents/example_folder/cqlDet.pt");
+    at::Tensor output = module(inputs).toTensor();
+    outdata.open("output.dat", ofstream::out | ofstream::trunc);
+    string output1(to_string(output[0][0].item<float>()));
+    string output2(to_string(output[0][1].item<float>()));
+    string output3(to_string(output[0][2].item<float>()));
+    outdata << output1 << " ";
+    outdata << output2 << " ";
+    outdata << output3;
+    outdata.close();
+    return 0;
+    
+    /*
+    int i;
+    for(i=0;i<27770;i++){
+        std::cout << i <<'\n'; //hi
+        torch::jit::script::Module module;
+        try {
+          // Deserialize the ScriptModule from a file using torch::jit::load().
+          module = torch::jit::load("/Users/liliang/Documents/example_folder/cqlDet.pt");
+        }
+        catch (const c10::Error& e) {
+          std::cerr << "error loading the model\n";
+          return -1;
+        }
+
+        //std::cout << "ok\n";
+        test(module);
+    }//*/
     /*
     // Create a vector of inputs.
     std::vector<torch::jit::IValue> inputs;
