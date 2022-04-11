@@ -16,8 +16,8 @@ TRUE  0 RL_Spacecraft.txt       !  Existence, RefOrb, Input file for SC 0
 08 30 00.00                     !  Time (UTC) (Hr,Min,Sec)
 37.0                            !  Leap Seconds (sec)
 USER                            !  F10.7, Ap (USER, NOMINAL or TWOSIGMA)
-100.5                           !  USER-provided F10.7
-96.9                           !  USER-provided Ap 
+180.0                           !  USER-provided F10.7
+70.0                           !  USER-provided Ap 
 IGRF                            !  Magfield (NONE,DIPOLE,IGRF)
 8   8                           !  IGRF Degree and Order (<=10)
 8   8                           !  Earth Gravity Model N and M (<=18)
