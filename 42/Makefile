@@ -209,7 +209,7 @@ endif
 $(OBJ)42dynamics.o $(OBJ)42environs.o $(OBJ)42ephem.o $(OBJ)42fsw.o \
 $(OBJ)42init.o $(OBJ)42ipc.o $(OBJ)42perturb.o $(OBJ)42report.o \
 $(OBJ)42sensors.o \
-$(OBJ)42nos3.o
+$(OBJ)42nos3.o #../load_torchscriptModel/callable2/build/CMakeFiles/example_fast.dir/example_fast.cpp.o
 
 KITOBJ = $(OBJ)dcmkit.o $(OBJ)envkit.o $(OBJ)fswkit.o $(OBJ)geomkit.o \
 $(OBJ)iokit.o $(OBJ)mathkit.o $(OBJ)nrlmsise00kit.o $(OBJ)msis86kit.o \
@@ -231,8 +231,9 @@ CFLAGS = -fpic -Wall -Wshadow -Wno-deprecated $(XWARN) -g  $(ANSIFLAGS) $(GLINC)
 
 ##########################  Rules to link 42  #############################
 
-42 : $(42OBJ) $(GUIOBJ) $(SIMIPCOBJ) $(FFTBOBJ) $(SLOSHOBJ) $(KITOBJ) $(ACOBJ) $(GMSECOBJ)
-	$(CC) $(LFLAGS) $(GMSECBIN) -o $(EXENAME) $(42OBJ) $(GUIOBJ) $(FFTBOBJ) $(SLOSHOBJ) $(KITOBJ) $(ACOBJ) $(GMSECOBJ) $(SIMIPCOBJ) $(LIBS) $(GMSECLIB)
+42 : $(42OBJ) $(GUIOBJ) $(SIMIPCOBJ) $(FFTBOBJ) $(SLOSHOBJ) $(KITOBJ) $(ACOBJ) $(GMSECOBJ) Makefile
+	$(CC) $(LFLAGS) -L /home/jbreeden/libtorch/lib -L /home/jbreeden/EECS598/rl-acs/load_torchscriptModel/callable2/build_custom $(GMSECBIN) -o $(EXENAME) $(42OBJ) $(GUIOBJ) $(FFTBOBJ) $(SLOSHOBJ) $(KITOBJ) $(ACOBJ) $(GMSECOBJ) $(SIMIPCOBJ) $(LIBS) $(GMSECLIB)  -L /home/jbreeden/libtorch/lib -lexample_fast  -pthread -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++14 -Wl,-rpath=/home/jbreeden/libtorch/lib -Wl,-rpath=/home/jbreeden/EECS598/rl-acs/load_torchscriptModel/callable2/build_custom 
+	
 
 AcApp : $(OBJ)AcApp.o $(ACKITOBJ) $(ACIPCOBJ) $(GMSECOBJ)
 	$(CC) $(LFLAGS) -o AcApp $(OBJ)AcApp.o $(ACKITOBJ) $(ACIPCOBJ) $(GMSECOBJ) $(LIBS)
@@ -265,7 +266,7 @@ $(OBJ)42ephem.o     : $(SRC)42ephem.c $(INC)42.h
 	$(CC) $(CFLAGS) -c $(SRC)42ephem.c -o $(OBJ)42ephem.o
 
 $(OBJ)42fsw.o       : $(SRC)42fsw.c $(INC)Ac.h $(INC)AcTypes.h
-	$(CC) $(CFLAGS) -c $(SRC)42fsw.c -o $(OBJ)42fsw.o
+	$(CC) $(CFLAGS) -I/home/jbreeden/EECS598/rl-acs/load_torchscriptModel/callable2/ -c $(SRC)42fsw.c -o $(OBJ)42fsw.o -lexample_fast -L ../load_torchscriptModel/callable2/build 
 
 $(OBJ)42gl.o        : $(SRC)42gl.c $(INC)42.h $(INC)42gl.h
 	$(CC) $(CFLAGS) -c $(SRC)42gl.c -o $(OBJ)42gl.o
