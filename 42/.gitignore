@@ -8,3 +8,5 @@ a.out
 42
 42.exe
 *.asv
+/input.dat
+/output.dat
