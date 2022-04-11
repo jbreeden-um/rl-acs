@@ -14,14 +14,16 @@
 #include <string>
 using namespace std;
 
-void test(torch::jit::script::Module module){
+torch::jit::script::Module torch_module;
+
+void get_torch_control(double States[6], double Actions[3]){
     std::vector<torch::jit::IValue> inputs;
-    double States[6];
+    // double States[6];
     int i;
-    double ini_state[6]={-1.180891077077e-01,-1.719999530800e-02,-7.300013419836e-03,0.000000000000e+00,-5.334234891820e+00,-1.570916181701e+00};
-    for(i=0;i<6;i++) {
-       States[i]=ini_state[i];
-    }
+    // double ini_state[6]={-1.180891077077e-01,-1.719999530800e-02,-7.300013419836e-03,0.000000000000e+00,-5.334234891820e+00,-1.570916181701e+00};
+    // for(i=0;i<6;i++) {
+       // States[i]=ini_state[i];
+    // }
     //double array[1][6] = {{-1.180891077077e-01,-1.719999530800e-02,-7.300013419836e-03,0.000000000000e+00,-5.334234891820e+00,-1.570916181701e+00}};
     //auto tharray = torch::zeros({1,6},torch::kFloat32); //or use kF64
     //std::memcpy(tharray.data_ptr(),array,sizeof(double)*tharray.numel());
@@ -32,35 +34,46 @@ void test(torch::jit::script::Module module){
     // Execute the model and turn its output into a tensor.
     at::Tensor output = module(inputs).toTensor();
     //std::cout << output[0]<<'\n';
+	for (i=0; i<3;i++) Actions[i] = (double)output[0][i].item<float>());
 }
-int main(){//(int argc, const char* argv[]) {
+void mytorch_init(){//(int argc, const char* argv[]) {
     //torch::Tensor tensor = torch::eye(3);
     //std::cout << tensor <<std::endl;<<<<<<< HEAD
-    ifstream indata;
-    ofstream outdata;
-    indata.open("input.dat");
-    double States[6];
-    for (int i=0; i<6; i++){
-        indata >> States[i];
-        cout << States[i] <<'\n';
+    // ifstream indata;
+    // ofstream outdata;
+    // indata.open("input.dat");
+    // double States[6];
+    // for (int i=0; i<6; i++){
+        // indata >> States[i];
+        // cout << States[i] <<'\n';
+    // }
+	 try {
+      // Deserialize the ScriptModule from a file using torch::jit::load().
+      torch_module = torch::jit::load("../cqlDet.pt");
     }
-    std::vector<torch::jit::IValue> inputs;
-    torch::Tensor tharray = torch::tensor({{States[0],States[1],States[2],States[3],States[4],States[5]}}, {torch::kFloat32});
-    inputs.push_back(tharray);
+    catch (const c10::Error& e) {
+      std::cerr << "error loading the model\n";
+      return;
+    }
+	std::cout << "Torch model loaded\n";
+    return;
+    
+	
+    // std::vector<torch::jit::IValue> inputs;
+    // torch::Tensor tharray = torch::tensor({{States[0],States[1],States[2],States[3],States[4],States[5]}}, {torch::kFloat32});
+    // inputs.push_back(tharray);
 
     // Execute the model and turn its output into a tensor.
-    torch::jit::script::Module module;
-    module = torch::jit::load("/home/jbreeden/EECS598/rl-acs/cqlDet100.pt");
-    at::Tensor output = module(inputs).toTensor();
-    outdata.open("output.dat", ofstream::out | ofstream::trunc);
-    string output1(to_string(output[0][0].item<float>()));
-    string output2(to_string(output[0][1].item<float>()));
-    string output3(to_string(output[0][2].item<float>()));
-    outdata << output1 << " ";
-    outdata << output2 << " ";
-    outdata << output3;
-    outdata.close();
-    return 0;
+    
+	// at::Tensor output = module(inputs).toTensor();
+    // outdata.open("output.dat", ofstream::out | ofstream::trunc);
+    // string output1(to_string(output[0][0].item<float>()));
+    // string output2(to_string(output[0][1].item<float>()));
+    // string output3(to_string(output[0][2].item<float>()));
+    // outdata << output1 << " ";
+    // outdata << output2 << " ";
+    // outdata << output3;
+    // outdata.close();
     
     /*
     int i;
