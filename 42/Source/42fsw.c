@@ -1147,6 +1147,7 @@ void PrototypeFSW(struct SCType *S)
                   AC->G[Ig].MaxTrq[j] = 0.1;
                }
             }
+	srand(time(NULL));
 #ifdef USE_TORCH
             mytorch_init("/home/jbreeden/EECS598/rl-acs/cqlDet100.pt");
 #endif
@@ -1195,7 +1196,7 @@ void PrototypeFSW(struct SCType *S)
           * */
 
 	      // Creating a random device for random seed generation
-         srand(time(NULL));
+         //srand(time(NULL));
          const long controller_number = 2;
          if (controller_number == 0){
              for (i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
