@@ -16,7 +16,9 @@
 #include <time.h>
 #include <stdlib.h>
 //#include <iostream>
+#ifdef USE_TORCH
 #include "example_fast.h"
+#endif
 
 //#include <torch/script.h> %newly added
 //#ifdef __cplusplus
@@ -1145,7 +1147,9 @@ void PrototypeFSW(struct SCType *S)
                   AC->G[Ig].MaxTrq[j] = 0.1;
                }
             }
+#ifdef USE_TORCH
             mytorch_init("/home/jbreeden/EECS598/rl-acs/cqlDet100.pt");
+#endif
          }
 
          /* Find qrn, wrn and joint angle commands */
@@ -1237,8 +1241,10 @@ void PrototypeFSW(struct SCType *S)
             //std::cout << output[0]<<'\n';
 
 	     printf("External: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);*/
+#ifdef USE_TORCH
 	     get_torch_control(States, Actions);
              for(i=0;i<3;i++) AC->MTB[i].Mcmd = Actions[i];
+#endif
 	     //printf("Library: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);
       }else{
             printf("Unknown momentum controller, line %d\n", __LINE__);
