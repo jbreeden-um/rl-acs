@@ -1145,7 +1145,7 @@ void PrototypeFSW(struct SCType *S)
                   AC->G[Ig].MaxTrq[j] = 0.1;
                }
             }
-            mytorch_init("/home/jbreeden/EECS598/rl-acs/cqlDet100.pt");
+            mytorch_init("/home/jbreeden/EECS598/rl-acs/cql_584188.pt");
          }
 
          /* Find qrn, wrn and joint angle commands */
@@ -1192,8 +1192,10 @@ void PrototypeFSW(struct SCType *S)
 
 	      // Creating a random device for random seed generation
          srand(time(NULL));
-         const long controller_number = 3;
-         if (controller_number == 1){
+         const long controller_number = 2;
+         if (controller_number == 0){
+             for (i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
+         }else if (controller_number == 1){
             double HxB[3];
             double Kunl = 1e6;
             for(i=0;i<3;i++) {
