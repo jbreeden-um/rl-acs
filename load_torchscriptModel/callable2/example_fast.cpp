@@ -54,6 +54,7 @@ void cpp_mytorch_init(char filename[200]){//(int argc, const char* argv[]) {
     }
     catch (const c10::Error& e) {
       std::cerr << "error loading the model\n";
+	std::cout << e.what() << "\n";
       return;
     }
 	std::cout << "Torch model loaded\n";
