@@ -233,17 +233,18 @@ TORCH_FLAG =
 # TORCH_FLAG = -D USE_TORCH
 ifneq ($(strip $(TORCH_FLAG)),)
    # if using torch
-   LFLAGS = $(LFLAGS) -L /home/jbreeden/libtorch/lib -L /home/jbreeden/EECS598/rl-acs/load_torchscriptModel/callable2/build_custom
-   LIBS = $(LIBS) -lexample_fast -pthread -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++14 -Wl,-rpath=/home/jbreeden/libtorch/lib -Wl,-rpath=/home/jbreeden/EECS598/rl-acs/load_torchscriptModel/callable2/build_custom
+   TORCH_LFLAGS = -L /home/jbreeden/libtorch/lib -L /home/jbreeden/EECS598/rl-acs/load_torchscriptModel/callable2/build_custom
+   TORCH_LIBS = -lexample_fast -pthread -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++14 -Wl,-rpath=/home/jbreeden/libtorch/lib -Wl,-rpath=/home/jbreeden/EECS598/rl-acs/load_torchscriptModel/callable2/build_custom
 else
    # if not using torch
-   
+   TORCH_LFLAGS = 
+   TORCH_LIBS = 
 endif
 
 ##########################  Rules to link 42  #############################
 
 42 : $(42OBJ) $(GUIOBJ) $(SIMIPCOBJ) $(FFTBOBJ) $(SLOSHOBJ) $(KITOBJ) $(ACOBJ) $(GMSECOBJ) Makefile
-	$(CC) $(LFLAGS) $(GMSECBIN) -o $(EXENAME) $(42OBJ) $(GUIOBJ) $(FFTBOBJ) $(SLOSHOBJ) $(KITOBJ) $(ACOBJ) $(GMSECOBJ) $(SIMIPCOBJ) $(LIBS) $(GMSECLIB)  
+	$(CC) $(LFLAGS) $(TORCH_LFLAGS) $(GMSECBIN) -o $(EXENAME) $(42OBJ) $(GUIOBJ) $(FFTBOBJ) $(SLOSHOBJ) $(KITOBJ) $(ACOBJ) $(GMSECOBJ) $(SIMIPCOBJ) $(LIBS) $(GMSECLIB) $(TORCH_LIBS)
 	
 
 AcApp : $(OBJ)AcApp.o $(ACKITOBJ) $(ACIPCOBJ) $(GMSECOBJ)
