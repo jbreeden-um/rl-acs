@@ -26,14 +26,18 @@ class DataSampler:
         # lines_per_chunk = self.chunk_length + self.skip_header + self.skip_footer
         # current_line = self.num_chunks_read*lines_per_chunk + self.skip_header
         
+        # print("is anything happening?")
         with open(self.path_to_data, "r") as input:
             input.seek(max(11664000*self.num_chunks_read - 10000, 0))
             count = 0
+            print("start")
             line = input.readline()
+            # print("finish")
             while line[0:11] != "Value F10.7":
                 line = input.readline()
                 count += 1
                 # print(line[:-1])
+                # rint(line[0:11])
             # print("Skipped: ", count)
             
             for i in range(self.skip_header-1):
