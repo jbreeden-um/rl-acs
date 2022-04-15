@@ -1223,6 +1223,7 @@ void PrototypeFSW(struct SCType *S)
 
 	      // Creating a random device for random seed generation
          //srand(time(NULL));
+   if (fmod(SimTime, 5) < 0.01){
          const long controller_number = 4;
          set_10p7_AP();
          if (controller_number == 0){
@@ -1271,29 +1272,28 @@ void PrototypeFSW(struct SCType *S)
             //at::Tensor output = module(inputs).toTensor();
             //std::cout << output[0]<<'\n';
 
-	     printf("External: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);*/
+	      printf("External: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);*/
 #ifdef USE_TORCH
-	     get_torch_control(States, Actions);
-             for(i=0;i<3;i++) AC->MTB[i].Mcmd = Actions[i];
+	         get_torch_control(States, Actions);
+               for(i=0;i<3;i++) AC->MTB[i].Mcmd = Actions[i];
 #endif
-	     //printf("Library: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);
-      }else if (controller_number == 4){
-      //PID control+ gaussian random noise
-             double HxB[3];
-             double Kunl = 1e6;
-             for(i=0;i<3;i++) {
-                 Herr[i] = AC->Whl[i].H;
-             }
-             VxV(Herr,AC->bvb,HxB);
-             for(i=0;i<3;i++) AC->MTB[i].Mcmd = Kunl*HxB[i]+generate_normal_random_number(0.0,fabs(0.2*Kunl*HxB[i]));
-             //for(i=0;i<3;i++) {printf("control=%f\n",AC->MTB[i].Mcmd);}
-       }
-      else{
+	      //printf("Library: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);
+         }else if (controller_number == 4){
+            //PID control+ gaussian random noise
+            double HxB[3];
+            double Kunl = 1e6;
+            for(i=0;i<3;i++) {
+                Herr[i] = AC->Whl[i].H;
+            }
+            VxV(Herr,AC->bvb,HxB);
+            for(i=0;i<3;i++) AC->MTB[i].Mcmd = Kunl*HxB[i] + generate_normal_random_number(0.0,fabs(0.2*Kunl*HxB[i]));
+            //for(i=0;i<3;i++) {printf("control=%f\n",AC->MTB[i].Mcmd);}
+         }else{
             printf("Unknown momentum controller, line %d\n", __LINE__);
             exit(1);
          }
+   }
       }
-
 }
 /**********************************************************************/
 /*  SC_Spinner is a one-body spin-stabilized inertial pointer         */

@@ -1,9 +1,10 @@
-load time.42
+% load time.42
 load RL.42
 
-momentum = RL(:,1:3);
-angles = RL(:,4:6);
-actuators = RL(:,7:9);
+time = RL(:,1);
+momentum = RL(:,3:5);
+angles = RL(:,6:8);
+actuators = RL(:,9:11);
 
 %%
 figure(1); clf;
