@@ -143,7 +143,7 @@ if __name__ == "__main__":
 
     try:
         set_outputInterval(Value_OutputInterval, Path_to_file, 5)
-        if False
+        if False:
             for ii in range(len(Samples)):
                 #Value_107=round(Samples[ii,0], 1)
                 #Value_AP=round(Samples[ii,1], 1)
@@ -151,13 +151,13 @@ if __name__ == "__main__":
                 Value_W1=round(Samples[ii,1],4)
                 Value_W2=round(Samples[ii,2],4)
                 simulation(Value_W0,Value_W1,Value_W2,Path_to_file2, 62, 71, 80, rl_file)
-        else
-            for ii in range(5e3)
+        else:
+            for ii in range(5000):
                 Value_W0=round(generate_samples(N_W0,Low_W0,High_W0,Dist_type_W0)[0],4)
                 Value_W1=round(generate_samples(N_W1,Low_W1,High_W1,Dist_type_W1)[0],4)
                 Value_W2=round(generate_samples(N_W2,Low_W2,High_W2,Dist_type_W2)[0],4)
                 simulation(Value_W0,Value_W1,Value_W2,Path_to_file2, 62, 71, 80, rl_file)
-    except:
+    except Exception as e:
         print(f"Oops, something went wrong: {e}")
     finally:
         #time_file.close()
