@@ -15,6 +15,7 @@
 #include "42.h"
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 //#include <iostream>
 #ifdef USE_TORCH
 #include "example_fast.h"
@@ -1089,6 +1090,31 @@ double uniform_random_number(double low, double high)
    return ((num * 2) - 1);
 }
 
+double generate_uniform_ramdom_number(double low,double high)
+{
+   //Returns a random number in the range [low,high]
+   double num = ((double)rand()/ (double)RAND_MAX); //generate a random variable in the range [0,1]
+   return (num*(high-low)+low);
+}
+
+double generate_normal_random_number(double mean, double var)
+{  
+   //Returns a normal dsitributed random number of N(mean,var)
+   double num1 = ((double)rand()/ (double)RAND_MAX);
+   double num2 = ((double)rand()/ (double)RAND_MAX);
+   return mean+sqrt(var)*cos(2.0*3.1415926*num2)*sqrt(-2.0*log(num1));
+}
+void set_10p7_AP()
+{
+   static double frequency=300;
+   if (fmod(SimTime,frequency)<0.1)
+   {
+      Flux10p7=generate_uniform_ramdom_number(100.0,230.0);
+      GeomagIndex=generate_uniform_ramdom_number(50.0,100.0);
+      //printf("10.7=%f",Flux10p7);
+      //printf("AP=%f\n",GeomagIndex);
+   }
+}
 
 /**********************************************************************/
 /*  This simple control law is suitable for rapid prototyping.        */
@@ -1198,7 +1224,8 @@ void PrototypeFSW(struct SCType *S)
 	      // Creating a random device for random seed generation
          //srand(time(NULL));
    if (fmod(SimTime, 5) < 0.01){
-         const long controller_number = 1;
+         const long controller_number = 4;
+         set_10p7_AP();
          if (controller_number == 0){
              for (i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
          }else if (controller_number == 1){
@@ -1214,6 +1241,7 @@ void PrototypeFSW(struct SCType *S)
 
             // Trying this out with a uniformly random action choosing policy
             for(i=0;i<3;i++) AC->MTB[i].Mcmd = uniform_random_number(-0.65, 0.65);
+            
          }else if (controller_number == 3){
             //Using the control policy resulting from training
             //std::vector<torch::jit::IValue> inputs; // Create a vector of inputs.
@@ -1244,12 +1272,22 @@ void PrototypeFSW(struct SCType *S)
             //at::Tensor output = module(inputs).toTensor();
             //std::cout << output[0]<<'\n';
 
-	     printf("External: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);*/
+	      printf("External: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);*/
 #ifdef USE_TORCH
 	         get_torch_control(States, Actions);
                for(i=0;i<3;i++) AC->MTB[i].Mcmd = Actions[i];
 #endif
-	     //printf("Library: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);
+	      //printf("Library: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);
+         }else if (controller_number == 4){
+            //PID control+ gaussian random noise
+            double HxB[3];
+            double Kunl = 1e6;
+            for(i=0;i<3;i++) {
+                Herr[i] = AC->Whl[i].H;
+            }
+            VxV(Herr,AC->bvb,HxB);
+            for(i=0;i<3;i++) AC->MTB[i].Mcmd = Kunl*HxB[i] + generate_normal_random_number(0.0,fabs(0.2*Kunl*HxB[i]));
+            //for(i=0;i<3;i++) {printf("control=%f\n",AC->MTB[i].Mcmd);}
          }else{
             printf("Unknown momentum controller, line %d\n", __LINE__);
             exit(1);
