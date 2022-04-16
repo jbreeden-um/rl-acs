@@ -22,7 +22,7 @@ class DataSampler:
             self.bytes_per_chunk = 11664000
             self.bytes_offset = 10000
         elif setting == "coarse":
-            self.chunk_length = 5555
+            self.chunk_length = 1111
             self.max_chunk = 4999
             self.bytes_per_chunk = 444700
             self.bytes_offset = 1000
