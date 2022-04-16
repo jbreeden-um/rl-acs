@@ -1111,9 +1111,34 @@ void set_10p7_AP()
    {
       Flux10p7=generate_uniform_ramdom_number(100.0,230.0);
       GeomagIndex=generate_uniform_ramdom_number(50.0,100.0);
-      //printf("10.7=%f",Flux10p7);
-      //printf("AP=%f\n",GeomagIndex);
-   }
+   
+      int record_10p7_AP = 1; //set this to be 1 if we want to record F10.7 and AP
+      if (record_10p7_AP)
+      {  
+      	FILE *fptr;
+      	char str_10p7[21];
+      	char str_AP[21];
+        sprintf(str_10p7,"%.2lf", Flux10p7);
+        sprintf(str_AP,"%.2lf", GeomagIndex);
+      
+      	if (SimTime < 0.1)
+      	{
+      	  fptr = fopen("../42/InOut/Values_10p7_AP.txt","w"); 
+        }
+      	if (SimTime >= 0.1)
+      	{
+      	  fptr = fopen("../42/InOut/Values_10p7_AP.txt","a"); 
+      	}
+      	if(fptr == NULL)
+      	{
+          printf("Error!");
+          exit(1);
+      	}
+      	fprintf(fptr, "%s,", str_10p7);
+        fprintf(fptr, "%s \n",str_AP);
+        fclose(fptr);
+      }
+    }  
 }
 
 /**********************************************************************/
