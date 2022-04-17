@@ -1219,7 +1219,7 @@ void PrototypeFSW(struct SCType *S)
             //std::vector<torch::jit::IValue> inputs; // Create a vector of inputs.
             double States[6], Actions[3];
             for(i=0;i<3;i++) {
-                States[i]=SC->Hvb[i];
+                States[i]=S->Hvb[i];
             }
             for(i=0;i<3;i++) {
                 States[i+3]=AC->position_angles[i];
@@ -1248,9 +1248,42 @@ void PrototypeFSW(struct SCType *S)
 #ifdef USE_TORCH
 	         get_torch_control(States, Actions);
                for(i=0;i<3;i++) AC->MTB[i].Mcmd = Actions[i];
+#else
+			 printf("torch is not defined!\n");
 #endif
 	     //printf("Library: %lf %lf %lf\n", Actions[0], Actions[1], Actions[2]);
-         }else{
+         }else if (controller_number == 5){
+			double States[7], Actions[3];
+            for(i=0;i<3;i++) {
+                States[i]=S->Hvb[i];
+            }
+            for(i=0;i<3;i++) {
+                States[i+3]=AC->position_angles[i];
+            }
+			static double confounder = 0.00032; // initial value
+			static double H_expected[3] = {S->Hvb[0], S->Hvb[1], S->Hvb[2]};
+			double deltaH[3];
+			for (i=0; i<3; i++) deltaH[i] = S->Hvb[i] - H_expected[i];
+			double new_confounder = MAGV(deltaH);
+			double update_rate = 1.0/(2.5*60.0/DT);
+			confounder = (1-update_rate)*confounder + update_rate*new_confounder;
+			States[6] = confounder;
+            
+#ifdef USE_TORCH
+	         get_torch_control(States, Actions);
+               for(i=0;i<3;i++) AC->MTB[i].Mcmd = Actions[i];
+#else
+			 printf("torch is not defined!\n");
+#endif
+			double UxB[3], OrbN[3], HxN[3];
+			struct OrbitType *O;
+			O = Orb[S->RefOrb];
+			VxV(Actions, AC->bvb, UxB);
+			VxV(S->PosN, S->VelN, OrbN);
+			UNITV(OrbN);
+			VxV(OrbN, S->Hvb, HxN);
+			for (i=0; i<3; i++) H_expected[i] = S->Hvb[i] + DT*(UxB[i] - sqrt(O->mu/pow(O->sma,3.0))*HxN[i]);
+		 }else{
             printf("Unknown momentum controller, line %d\n", __LINE__);
             exit(1);
          }
