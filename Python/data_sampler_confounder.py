@@ -8,10 +8,28 @@ class DataSampler:
         self.path_to_data = path_to_data
         self.chunk_length = 27771
         self.max_chunk = 1e4
+        self.bytes_per_chunk = 11664000
+        self.bytes_offset = 10000
         self.skip_header = 6
         self.skip_footer = 1
         self.num_chunks_read = 0
         self.data = None
+        
+    def setting(self, setting):
+        if setting == "original":
+            self.chunk_length = 27771
+            self.max_chunk = 1e4
+            self.bytes_per_chunk = 11664000
+            self.bytes_offset = 10000
+            self.skip_header = 4
+            self.skip_footer = 1
+        elif setting == "coarse":
+            self.chunk_length = 1111
+            self.max_chunk = 4999
+            self.bytes_per_chunk = 444700
+            self.bytes_offset = 1000
+            self.skip_header = 4
+            self.skip_footer = 1
         
     def use_file(self, filename):
         self.path_to_data = filename
@@ -26,14 +44,18 @@ class DataSampler:
         # lines_per_chunk = self.chunk_length + self.skip_header + self.skip_footer
         # current_line = self.num_chunks_read*lines_per_chunk + self.skip_header
         
+        # print("is anything happening?")
         with open(self.path_to_data, "r") as input:
-            input.seek(max(11664000*self.num_chunks_read - 10000, 0))
+            input.seek(max(self.bytes_per_chunk*self.num_chunks_read - self.bytes_offset, 0))
             count = 0
+            print("start")
             line = input.readline()
-            while line[0:11] != "Value F10.7":
+            # print("finish")
+            while line[0:12] != "Value Wheel0":
                 line = input.readline()
                 count += 1
                 # print(line[:-1])
+                # rint(line[0:11])
             # print("Skipped: ", count)
             
             for i in range(self.skip_header-1):
@@ -42,7 +64,7 @@ class DataSampler:
             self.data = pandas.read_csv(input, header=None, skiprows=0, usecols=range(21), dtype=np.float64, nrows=self.chunk_length).to_numpy()
             
             self.num_chunks_read += 1
-            # print(self.data[0])
+            print(self.data[0])
             
             print("Read chunk #", self.num_chunks_read, "out of", int(self.max_chunk))
         
@@ -84,10 +106,11 @@ class DataSampler:
         
 # random.seed(0)
 # samples = DataSampler()
-# samples.use_file("RL.42")
+# samples.use_file("collected_data/rl_stochpid.txt")
+# samples.setting("coarse")
 # samples.use_chunk(9999)
 # samples.read_chunk()
-# [states, actions, rewards, next_states, metric] = samples.get_batch(15)
+# [states, actions, rewards, next_states, metrics] = samples.get_batch(20)
 # print(states)
 # print(actions)
 # print(rewards)
