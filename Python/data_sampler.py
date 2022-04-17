@@ -21,7 +21,7 @@ class DataSampler:
             self.max_chunk = 1e4
             self.bytes_per_chunk = 11664000
             self.bytes_offset = 10000
-            self.skip_header = 6
+            self.skip_header = 4
             self.skip_footer = 1
         elif setting == "coarse":
             self.chunk_length = 1111
@@ -51,7 +51,7 @@ class DataSampler:
             print("start")
             line = input.readline()
             # print("finish")
-            while line[0:11] != "Value F10.7":
+            while line[0:12] != "Value Wheel0":
                 line = input.readline()
                 count += 1
                 # print(line[:-1])
