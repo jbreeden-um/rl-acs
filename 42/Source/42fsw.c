@@ -1197,8 +1197,8 @@ void PrototypeFSW(struct SCType *S)
 
 	      // Creating a random device for random seed generation
          //srand(time(NULL));
-   if (fmod(SimTime, 5) < 0.01){
-         const long controller_number = 1;
+   if (fmod(SimTime, 5) < 0.01|| 1){
+         const long controller_number = 3;
          if (controller_number == 0){
              for (i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
          }else if (controller_number == 1){
@@ -1261,11 +1261,11 @@ void PrototypeFSW(struct SCType *S)
                 States[i+3]=AC->position_angles[i];
             }
 			static double confounder = 0.00032; // initial value
-			static double H_expected[3] = {S->Hvb[0], S->Hvb[1], S->Hvb[2]};
+			static double H_expected[3] = {0, 0, 0};
 			double deltaH[3];
 			for (i=0; i<3; i++) deltaH[i] = S->Hvb[i] - H_expected[i];
 			double new_confounder = MAGV(deltaH);
-			double update_rate = 1.0/(2.5*60.0/DT);
+			double update_rate = 1.0/(2.5*60.0/AC->DT);
 			confounder = (1-update_rate)*confounder + update_rate*new_confounder;
 			States[6] = confounder;
             
@@ -1276,13 +1276,11 @@ void PrototypeFSW(struct SCType *S)
 			 printf("torch is not defined!\n");
 #endif
 			double UxB[3], OrbN[3], HxN[3];
-			struct OrbitType *O;
-			O = Orb[S->RefOrb];
 			VxV(Actions, AC->bvb, UxB);
 			VxV(S->PosN, S->VelN, OrbN);
 			UNITV(OrbN);
 			VxV(OrbN, S->Hvb, HxN);
-			for (i=0; i<3; i++) H_expected[i] = S->Hvb[i] + DT*(UxB[i] - sqrt(O->mu/pow(O->sma,3.0))*HxN[i]);
+			for (i=0; i<3; i++) H_expected[i] = S->Hvb[i] + AC->DT*(UxB[i] - sqrt(O->mu/pow(O->SMA,3.0))*HxN[i]);
 		 }else{
             printf("Unknown momentum controller, line %d\n", __LINE__);
             exit(1);
