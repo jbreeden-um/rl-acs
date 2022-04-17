@@ -21,11 +21,15 @@ class DataSampler:
             self.max_chunk = 1e4
             self.bytes_per_chunk = 11664000
             self.bytes_offset = 10000
+            self.skip_header = 6
+            self.skip_footer = 1
         elif setting == "coarse":
             self.chunk_length = 1111
             self.max_chunk = 4999
             self.bytes_per_chunk = 444700
             self.bytes_offset = 1000
+            self.skip_header = 4
+            self.skip_footer = 1
         
     def use_file(self, filename):
         self.path_to_data = filename
