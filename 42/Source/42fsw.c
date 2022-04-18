@@ -1149,7 +1149,7 @@ void PrototypeFSW(struct SCType *S)
             }
 	srand(time(NULL));
 #ifdef USE_TORCH
-            mytorch_init("/home/jbreeden/EECS598/rl-acs/cqlDet100.pt");
+            mytorch_init("/home/jbreeden/EECS598/rl-acs/workflowConfound_CPUonly.pt");
 #endif
          }
 
@@ -1198,7 +1198,7 @@ void PrototypeFSW(struct SCType *S)
 	      // Creating a random device for random seed generation
          //srand(time(NULL));
    if (fmod(SimTime, 5) < 0.01|| 1){
-         const long controller_number = 3;
+         const long controller_number = 5;
          if (controller_number == 0){
              for (i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
          }else if (controller_number == 1){
@@ -1270,7 +1270,7 @@ void PrototypeFSW(struct SCType *S)
 			States[6] = confounder;
             
 #ifdef USE_TORCH
-	         get_torch_control(States, Actions);
+	         get_torch_control7(States, Actions);
                for(i=0;i<3;i++) AC->MTB[i].Mcmd = Actions[i];
 #else
 			 printf("torch is not defined!\n");
