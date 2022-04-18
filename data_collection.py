@@ -146,8 +146,8 @@ if __name__ == "__main__":
     Dist_type_W1='UNIFORM'
     Dist_type_W2='UNIFORM'
     Dist_type_RAAN='UNIFORM'
-    Record_10p7_AP=1 #set this to 0 if we don't want values of F10.7 and AP be stored
-    Vary_RAAN=1 #set this to 0 if we don't want vary RAAN
+    Record_10p7_AP=True #set this to 0 if we don't want values of F10.7 and AP be stored
+    Vary_RAAN=False #set this to 0 if we don't want vary RAAN
     
     Path_to_file='./42/InOut/Inp_Sim.txt'
     Path_to_file2='./42/InOut/RL_Spacecraft.txt'
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     #time_file = open(f"{RESULT_DIR}/time.txt", "w+")
     if (Record_10p7_AP):
         value_file = open(f"{RESULT_DIR}/F10p7_AP.txt", "w+")
-    rl_file = open(f"{RESULT_DIR}/rl.txt", "w+")
+    rl_file = open(f"{RESULT_DIR}/new_rl.txt", "w+")
 
     Samples_W0=generate_samples(N_W0,Low_W0,High_W0,Dist_type_W0)
     Samples_W1=generate_samples(N_W1,Low_W1,High_W1,Dist_type_W1)
@@ -185,7 +185,7 @@ if __name__ == "__main__":
                     record_F10p7_AP(value_file,ii+1)
         else:
         
-            for ii in range(5):
+            for ii in range(5000):
                 Value_W0=round(generate_samples(1,Low_W0,High_W0,Dist_type_W0)[0],4)
                 Value_W1=round(generate_samples(1,Low_W1,High_W1,Dist_type_W1)[0],4)
                 Value_W2=round(generate_samples(1,Low_W2,High_W2,Dist_type_W2)[0],4)
@@ -198,4 +198,5 @@ if __name__ == "__main__":
         print(f"Oops, something went wrong: {e}")
     finally:
         #time_file.close()
+        # print("Done, closing file")
         rl_file.close()
