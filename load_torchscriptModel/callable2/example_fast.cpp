@@ -16,6 +16,7 @@
 using namespace std;
 
 torch::jit::script::Module torch_module;
+torch::Device torch_device(torch::kCPU);
 
 void cpp_get_torch_control(double States[6], double Actions[3]){
     std::vector<torch::jit::IValue> inputs;
@@ -37,6 +38,26 @@ void cpp_get_torch_control(double States[6], double Actions[3]){
     //std::cout << output[0]<<'\n';
 	for (i=0; i<3;i++) Actions[i] = (double)output[0][i].item<float>();
 }
+void cpp_get_torch_control7(double States[7], double Actions[3]){
+    std::vector<torch::jit::IValue> inputs;
+    // double States[6];
+    int i;
+    // double ini_state[6]={-1.180891077077e-01,-1.719999530800e-02,-7.300013419836e-03,0.000000000000e+00,-5.334234891820e+00,-1.570916181701e+00};
+    // for(i=0;i<6;i++) {
+       // States[i]=ini_state[i];
+    // }
+    //double array[1][6] = {{-1.180891077077e-01,-1.719999530800e-02,-7.300013419836e-03,0.000000000000e+00,-5.334234891820e+00,-1.570916181701e+00}};
+    //auto tharray = torch::zeros({1,6},torch::kFloat32); //or use kF64
+    //std::memcpy(tharray.data_ptr(),array,sizeof(double)*tharray.numel());
+    torch::Tensor tharray = torch::tensor({{States[0],States[1],States[2],States[3],States[4],States[5],States[6]}}, {torch::kFloat32});
+    inputs.push_back(tharray);//-1.0*torch::rand({1, 6}));
+    //std::cout << "hi\n";
+
+    // Execute the model and turn its output into a tensor.
+    at::Tensor output = torch_module(inputs).toTensor();
+    //std::cout << output[0]<<'\n';
+	for (i=0; i<3;i++) Actions[i] = (double)output[0][i].item<float>();
+}
 void cpp_mytorch_init(char filename[200]){//(int argc, const char* argv[]) {
     //torch::Tensor tensor = torch::eye(3);
     //std::cout << tensor <<std::endl;<<<<<<< HEAD
@@ -50,7 +71,13 @@ void cpp_mytorch_init(char filename[200]){//(int argc, const char* argv[]) {
     // }
 	 try {
       // Deserialize the ScriptModule from a file using torch::jit::load().
-      torch_module = torch::jit::load(filename);
+	std::cout << "started torch model import\n";
+      torch_module = torch::jit::load(filename, c10::DeviceType::CPU);
+	std::cout << "filename is valid\n";
+      torch_module.to(at::kCPU);
+	std::cout << "file works in CPU\n";
+//      torch_module.cpu();
+//	std::cout << "successfully moved to CPU\n";
     }
     catch (const c10::Error& e) {
       std::cerr << "error loading the model\n";
@@ -119,6 +146,10 @@ void cpp_mytorch_init(char filename[200]){//(int argc, const char* argv[]) {
 
 void get_torch_control(double States[6], double Actions[3]){
     cpp_get_torch_control(States, Actions);
+	return;
+}
+void get_torch_control7(double States[7], double Actions[3]){
+    cpp_get_torch_control7(States, Actions);
 	return;
 }
 void mytorch_init(char filename[200]){
