@@ -1249,7 +1249,7 @@ void PrototypeFSW(struct SCType *S)
 	      // Creating a random device for random seed generation
          //srand(time(NULL));
    if (fmod(SimTime, 5) < 0.01){
-         const long controller_number = 4;
+         const long controller_number = 2;
          set_10p7_AP();
          if (controller_number == 0){
              for (i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
