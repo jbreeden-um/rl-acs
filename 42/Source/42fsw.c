@@ -1149,7 +1149,7 @@ void PrototypeFSW(struct SCType *S)
             }
 	srand(time(NULL));
 #ifdef USE_TORCH
-            mytorch_init("/home/jbreeden/EECS598/rl-acs/workflowConfound_CPUonly.pt");
+            mytorch_init("/home/jbreeden/EECS598/rl-acs/workflowConfound_CPUonly_redo.pt");
 #endif
          }
 
@@ -1197,7 +1197,7 @@ void PrototypeFSW(struct SCType *S)
 
 	      // Creating a random device for random seed generation
          //srand(time(NULL));
-   if (fmod(SimTime, 5) < 0.01|| 1){
+   if (fmod(SimTime, 5) < 0.01){
          const long controller_number = 5;
          if (controller_number == 0){
              for (i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
@@ -1265,9 +1265,10 @@ void PrototypeFSW(struct SCType *S)
 			double deltaH[3];
 			for (i=0; i<3; i++) deltaH[i] = S->Hvb[i] - H_expected[i];
 			double new_confounder = MAGV(deltaH);
-			double update_rate = 1.0/(2.5*60.0/AC->DT);
+			double update_rate = 1.0/(.1*60.0/5);
 			confounder = (1-update_rate)*confounder + update_rate*new_confounder;
 			States[6] = confounder;
+                        printf("%lf\n", confounder);
             
 #ifdef USE_TORCH
 	         get_torch_control7(States, Actions);
@@ -1280,7 +1281,7 @@ void PrototypeFSW(struct SCType *S)
 			VxV(S->PosN, S->VelN, OrbN);
 			UNITV(OrbN);
 			VxV(OrbN, S->Hvb, HxN);
-			for (i=0; i<3; i++) H_expected[i] = S->Hvb[i] + AC->DT*(UxB[i] - sqrt(O->mu/pow(O->SMA,3.0))*HxN[i]);
+			for (i=0; i<3; i++) H_expected[i] = S->Hvb[i] + 5.0*(UxB[i] - sqrt(O->mu/pow(O->SMA,3.0))*HxN[i]);
 		 }else{
             printf("Unknown momentum controller, line %d\n", __LINE__);
             exit(1);
