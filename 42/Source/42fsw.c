@@ -1149,7 +1149,7 @@ void PrototypeFSW(struct SCType *S)
             }
 	srand(time(NULL));
 #ifdef USE_TORCH
-            mytorch_init("/home/jbreeden/EECS598/rl-acs/workflowConfound_CPUonly_redo.pt");
+            mytorch_init("/home/jbreeden/EECS598/rl-acs/cqlDet2000_Ep40_CPUonly.pt");
 #endif
          }
 
@@ -1197,8 +1197,8 @@ void PrototypeFSW(struct SCType *S)
 
 	      // Creating a random device for random seed generation
          //srand(time(NULL));
-   if (fmod(SimTime, 5) < 0.01){
-         const long controller_number = 5;
+   if (fmod(SimTime, 5) < 0.01 || 1){
+         const long controller_number = 3;
          if (controller_number == 0){
              for (i=0;i<3;i++) AC->MTB[i].Mcmd = 0.0;
          }else if (controller_number == 1){
